@@ -2,6 +2,7 @@ import Navbar from "@/components/Navbar";
 import { useRouter } from "next/router";
 import Image from "next/image";
 import logo from "../../../assests/pngimages/Worthylogo.jpg";
+import Project from "@/components/Project";
 const Portfolio = () => {
   const router = useRouter();
   const { uname } = router.query;
@@ -10,7 +11,7 @@ const Portfolio = () => {
   const userName = Array.isArray(uname) ? uname[0] : uname || "";
 
   return (
-    <div className="px-4">
+    <div className="px-8">
       <Navbar uname={userName} />
 
       {/* --------------------------------------first section ---------------------------------------- */}
@@ -105,12 +106,26 @@ const Portfolio = () => {
         </div>
       </div>
 
+      {/* --------------------------------------third section ---------------------------------------- */}
+      <div className="mt-36">
+        <div className="w-full">
+          <div className=" text-[36px] font-bold px-8 py-2 text-[#40348C]">
+            Portfolio Projects
+          </div>
+          <div className=" text-[20px] px-8 py-2 mt-8">
+            This project focuses on enhancing the user experience of Flipkart,
+            India’s leading e-commerce platform, by identifying pain points and
+            delivering an intuitive design solution. The primary objectives
+            include streamlining the navigation flow.
+          </div>
+        </div>
 
-
-
-
-{/* --------------------------------------third section ---------------------------------------- */}
-
+        <div className="flex flex-col gap-8 justify-center">
+          <Project/>
+          <Project/>
+          <Project/>
+        </div>
+      </div>
     </div>
   );
 };
