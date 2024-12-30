@@ -1,16 +1,20 @@
 import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+interface ProjectData {
+  id: string;
+  name: string;
+}
 
 const Project = () => {
   const router = useRouter();
   const { uname, project } = router.query;
-  const [projectData, setProjectData] = useState<any[]>([]);
+  const [projectData, setProjectData] = useState<ProjectData[]>([]);
 
   useEffect(() => {
     if (uname && project) {
       const fetchProjectData = async () => {
         const res = await fetch(`/api/get-file-content?folderName=${uname}&fileName=${project}.xlsx`);
-        const data = await res.json();
+        const data: ProjectData[] = await res.json();  
         setProjectData(data);
       };
 

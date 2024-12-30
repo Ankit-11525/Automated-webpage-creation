@@ -1,7 +1,6 @@
 import { google } from 'googleapis';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import xlsx from 'xlsx'; // To parse Excel files
-import { GaxiosPromise } from 'gaxios';
 import { Readable } from 'stream';
 
 const CLIENT_ID = process.env.PUBLIC_NEXT_CLIENT_ID;
@@ -77,8 +76,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 // Helper function to convert stream to buffer
 async function streamToBuffer(stream: Readable): Promise<Buffer> {
     return new Promise<Buffer>((resolve, reject) => {
-        const chunks: any[] = [];
-        stream.on('data', (chunk) => chunks.push(chunk));
+        const chunks: Buffer[] = [];
+        stream.on('data', (chunk: Buffer) => chunks.push(chunk));
         stream.on('end', () => resolve(Buffer.concat(chunks)));
         stream.on('error', reject);
     });

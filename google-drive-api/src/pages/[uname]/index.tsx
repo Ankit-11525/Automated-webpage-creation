@@ -1,6 +1,5 @@
 import Navbar from "@/components/Navbar";
 import { useRouter } from "next/router";
-import "../../../styles/globals.css";
 import Image from "next/image";
 import logo from "../../../assests/pngimages/Worthylogo.jpg";
 const Portfolio = () => {

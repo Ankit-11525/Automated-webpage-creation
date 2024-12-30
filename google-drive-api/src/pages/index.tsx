@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
-import '../../styles/globals.css';
 import Navbar from '@/components/Navbar';
+type Folder = {
+  id: string;
+  name: string;
+};
 
 const Home = () => {
-  const [folders, setFolders] = useState<any[]>([]);
+  const [folders, setFolders] = useState<Folder[]>([]);
 
   useEffect(() => {
     const fetchFolders = async () => {
@@ -16,7 +19,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-4  ">
+    <div className="container mx-auto p-4">
       <Navbar uname="Sanidhya Tulsinandan"/>
       <h1 className="text-2xl font-bold mb-4 mt-12">JobsWorthy Folder List</h1>
       <table className="w-full table-auto border-collapse border border-gray-300">
