@@ -27,7 +27,7 @@ const Portfolio = () => {
     };
 
     fetchFolders();
-  }, []);
+  });
   return (
     <div>
       <div className="px-1 md:px-8">

@@ -6,7 +6,6 @@ const CLIENT_SECRET = process.env.PUBLIC_NEXT_CLIENT_SECRET;
 const REDIRECT_URI = process.env.PUBLIC_NEXT_REDIRECT_URI;
 
 const REFRESH_TOKEN = process.env.PUBLIC_NEXT_REFRESH_TOKEN;
-const FOLDER_ID=process.env.PUBLIC_NEXT_FOLDER_ID;
 const oauth2Client = new google.auth.OAuth2(
   CLIENT_ID,
   CLIENT_SECRET,
