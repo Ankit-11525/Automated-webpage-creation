@@ -5,7 +5,7 @@ import logo from "../../assests/pngimages/Worthylogo.jpg";
 const Project = () => {
   return (
     <div>
-      <div className="border-2 border-gray-300 rounded-xl mx-8 flex flex-col md:flex-row my-1 py-4">
+      <div className="border-2 border-gray-300 rounded-xl mx-2 md:mx-8 flex flex-col md:flex-row my-1 py-4 px-1">
         {/* left side box */}
         <div className="w-full md:w-1/3 flex flex-row p-4 items-center justify-center ">
           <div className="w-72 md:w-96">
