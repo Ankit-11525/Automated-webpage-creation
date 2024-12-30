@@ -22,14 +22,16 @@ const drive = google.drive({
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const folderId = FOLDER_ID; // Replace with your main folder ID
+    const {id} = req.query; 
+    console.log("folderId : ",id)
     const result = await drive.files.list({
-      q: `'${folderId}' in parents and mimeType = 'application/vnd.google-apps.folder'`,
+      q: `'${id}' in parents and mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'`,
       fields: 'files(id, name)',
     });
+    
 
     res.status(200).json(result.data.files);
   } catch (error) {
-    res.status(500).json({ error: `Failed to list folders ${error}` });
+    res.status(500).json({ error: `Failed to list files ${error}` });
   }
 }

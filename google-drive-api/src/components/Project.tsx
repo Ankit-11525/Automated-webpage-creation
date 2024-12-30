@@ -1,8 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Image from "next/image";
 import logo from "../../assests/pngimages/Worthylogo.jpg";
-
-const Project = () => {
+import Link from "next/link";
+interface ProjectProps {
+  foldername: string;
+  fileid: string;
+  filename: string;
+}
+const Project = ({ foldername, fileid, filename }: ProjectProps) => {
+  const nameWithoutExtension = filename.replace(/\.xlsx$/, "");
   return (
     <div>
       <div className="border-2 border-gray-300 rounded-xl mx-2 md:mx-8 flex flex-col md:flex-row my-1 py-4 px-1">
@@ -22,7 +28,7 @@ const Project = () => {
         {/* right side box */}
         <div className="w-full md:w-2/3 flex flex-col justify-center gap-4">
           <div className="text-[36px] font-bold px-8 py-2 text-[#40348C]">
-            Name of the portfolio project
+            {nameWithoutExtension}
           </div>
           <div>
             This project focuses on enhancing the user experience of Flipkart,
@@ -36,9 +42,11 @@ const Project = () => {
             <div>TECHNOLOGY</div>
           </div>
           <div>
-            <button className="bg-[#40348C] text-white p-2 mt-4 rounded-sm">
-              OPEN PROJECT
-            </button>
+            <Link href={`/${foldername}/${nameWithoutExtension}?id=${fileid}`}>
+              <button className="bg-[#40348C] text-white p-2 mt-4 rounded-sm">
+                OPEN PROJECT
+              </button>
+            </Link>
           </div>
         </div>
       </div>

@@ -5,18 +5,34 @@ import logo from "../../../assests/pngimages/Worthylogo.jpg";
 import Project from "@/components/Project";
 import ReasonCard from "@/components/ReasonCard";
 import Footer from "@/components/Footer";
+import { useEffect, useState } from "react";
+
+type File = {
+  id: string;
+  name: string;
+};
 const Portfolio = () => {
   const router = useRouter();
-  const { uname } = router.query;
+  const { uname, id } = router.query;
 
   // check uname is a string, handle undefined or array cases
   const userName = Array.isArray(uname) ? uname[0] : uname || "";
+  const [files, setFiles] = useState<File[]>([]);
 
+  useEffect(() => {
+    const fetchFolders = async () => {
+      const res = await fetch(`/api/get-all-files?id=${id}`);
+      const data = await res.json();
+      setFiles(data);
+    };
+
+    fetchFolders();
+  }, []);
   return (
     <div>
       <div className="px-1 md:px-8">
         <Navbar uname={userName} />
-
+        
         {/* --------------------------------------first section ---------------------------------------- */}
 
         <div className="w-full flex flex-col md:flex-row  mx-auto mt-8 ">
@@ -124,9 +140,12 @@ const Portfolio = () => {
           </div>
 
           <div className="flex flex-col gap-8 justify-center">
-            <Project />
-            <Project />
-            <Project />
+            {files &&
+              files.map((file, index) => (
+                <div key={index}>
+                  <Project foldername={userName} fileid={file.id} filename={file.name}/>
+                </div>
+              ))}
           </div>
         </div>
 
