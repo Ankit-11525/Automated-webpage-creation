@@ -10,18 +10,22 @@ const REDIRECT_URI = process.env.PUBLIC_NEXT_REDIRECT_URI;
 const REFRESH_TOKEN = process.env.PUBLIC_NEXT_REFRESH_TOKEN;
 
 const oauth2Client = new google.auth.OAuth2(
-  CLIENT_ID,
-  CLIENT_SECRET,
-  REDIRECT_URI
+    CLIENT_ID,
+    CLIENT_SECRET,
+    REDIRECT_URI
 );
 
 oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
 const drive = google.drive({
-  version: 'v3',
-  auth: oauth2Client,
+    version: 'v3',
+    auth: oauth2Client,
 });
-
+interface RowData {
+    heading: string;
+    description: string;
+    images: string[];
+}
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { folderName, fileName } = req.query; // folderName: uname, fileName: project1.xlsx
 
@@ -64,9 +68,23 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Now we can use xlsx to read the buffer
         const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
         const sheetName = workbook.SheetNames[0];
-        const data = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        const data: (string | number)[][] = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
+        const filteredData = data.filter((row: (string | number)[]) => row.length > 0);
 
-        res.status(200).json(data);
+        const arrtojson: RowData[] = [];
+
+        filteredData.map((row: (string | number)[]) => {
+            const heading = row[0] as string;
+            const description = row[1] as string;
+            const images = row.slice(2).map(item => item as string); 
+            arrtojson.push({
+                heading,
+                description,
+                images,
+            });
+        });
+
+        res.status(200).json(arrtojson);
     } catch (error) {
         console.error(error);
         res.status(500).json({ error: 'Failed to retrieve file content' });
