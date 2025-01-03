@@ -27,50 +27,61 @@ interface RowData {
     images: string[];
 }
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const { folderName, fileName } = req.query; // folderName: uname, fileName: project1.xlsx
+    const { folderName, fileName } = req.query;
 
     try {
-        // First, find the folder ID for the given folderName
         const folderResult = await drive.files.list({
             q: `name = '${folderName}' and mimeType = 'application/vnd.google-apps.folder'`,
             fields: 'files(id)',
         });
-
+        
         const folderFiles = folderResult?.data?.files;
         if (!folderFiles || folderFiles.length === 0) {
             return res.status(404).json({ error: 'Folder not found' });
         }
-
+        
         const folderId = folderFiles[0]?.id;
-
-        // Find the file ID for the given Excel file (e.g., project1.xlsx)
+        
+        // Find the file ID for the given Excel file (e.g., project1.xlsx or Google Sheets)
         const fileResult = await drive.files.list({
             q: `name = '${fileName}' and '${folderId}' in parents`,
-            fields: 'files(id, name)',
+            fields: 'files(id, name, mimeType)',
         });
-
+        
         const fileFiles = fileResult?.data?.files;
         if (!fileFiles || fileFiles.length === 0) {
             return res.status(404).json({ error: 'File not found' });
         }
-
-        const fileId = fileFiles[0]?.id;
+        
+        const file = fileFiles[0];
+        const fileId = file?.id;
         if (!fileId) return res.status(404).json({ error: 'File not found' });
-        // Get the file content (as stream)
-        const file = await drive.files.get(
-            { fileId, alt: 'media' },
-            { responseType: 'stream' } // Ensure we use 'stream' here
-        );
-
-        // Convert the stream data into a buffer
-        const fileBuffer = await streamToBuffer(file.data as Readable);
-
-        // Now we can use xlsx to read the buffer
+        
+        // Check the MIME type to handle Google Sheets or .xlsx files
+        let fileBuffer: Buffer;
+        if (file.mimeType === 'application/vnd.google-apps.spreadsheet') {
+            // If it's a Google Sheet, export it as .xlsx
+            const exportResult = await drive.files.export(
+                { fileId, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+                { responseType: 'arraybuffer' }
+            );
+            fileBuffer = Buffer.from(new Uint8Array(exportResult.data as ArrayBuffer));
+        } else if (file.mimeType === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet') {
+            // If it's a .xlsx file, download it as stream
+            const fileStream = await drive.files.get(
+                { fileId, alt: 'media' },
+                { responseType: 'stream' }
+            );
+            fileBuffer = await streamToBuffer(fileStream.data as Readable);
+        } else {
+            return res.status(400).json({ error: 'Unsupported file type' });
+        }
+        
+        // Now we can use xlsx to read the buffer for both cases
         const workbook = xlsx.read(fileBuffer, { type: 'buffer' });
         const sheetName = workbook.SheetNames[0];
         const data: (string | number)[][] = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
         const filteredData = data.filter((row: (string | number)[]) => row.length > 0);
-
         const arrtojson: RowData[] = [];
 
         filteredData.map((row: (string | number)[]) => {
@@ -83,6 +94,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 images,
             });
         });
+        console.log("arrtojson : ",arrtojson)
 
         res.status(200).json(arrtojson);
     } catch (error) {

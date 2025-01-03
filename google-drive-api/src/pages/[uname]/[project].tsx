@@ -17,7 +17,7 @@ const Project = () => {
     if (uname && project) {
       const fetchProjectData = async () => {
         const res = await fetch(
-          `/api/get-file-content?folderName=${uname}&fileName=${project}.xlsx`
+          `/api/get-file-content?folderName=${uname}&fileName=${project}`
         );
         const data: sectionRow[] = await res.json();
         setProjectData(data);

@@ -21,18 +21,25 @@ const Portfolio = () => {
 
   useEffect(() => {
     const fetchFolders = async () => {
-      const res = await fetch(`/api/get-all-files?id=${id}`);
-      const data = await res.json();
-      setFiles(data);
+      try {
+        const res = await fetch(`/api/get-all-files?id=${id}`);
+        const data = await res.json();
+        setFiles(data);
+      } catch (error) {
+        console.error("Error fetching files:", error);
+      }
     };
-
-    fetchFolders();
-  });
+  
+    if (id) {
+      fetchFolders(); // Only call this if `id` is available
+    }
+  }, [id]); // Only re-run when `id` changes
+  
   return (
     <div>
       <div className="px-1 md:px-8">
         <Navbar uname={userName} />
-        
+
         {/* --------------------------------------first section ---------------------------------------- */}
 
         <div className="w-full flex flex-col md:flex-row  mx-auto mt-8 ">
@@ -140,10 +147,14 @@ const Portfolio = () => {
           </div>
 
           <div className="flex flex-col gap-8 justify-center">
-            {files &&
+            {files.length > 0 &&
               files.map((file, index) => (
                 <div key={index}>
-                  <Project foldername={userName} fileid={file.id} filename={file.name}/>
+                  <Project
+                    foldername={userName}
+                    fileid={file.id}
+                    filename={file.name}
+                  />
                 </div>
               ))}
           </div>

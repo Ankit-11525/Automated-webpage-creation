@@ -7,7 +7,7 @@ interface ProjectProps {
   fileid: string;
   filename: string;
 }
-const Project = ({ foldername, fileid, filename }: ProjectProps) => {
+const Project = ({ foldername, filename }: ProjectProps) => {
   const nameWithoutExtension = filename.replace(/\.xlsx$/, "");
   return (
     <div>
@@ -42,7 +42,7 @@ const Project = ({ foldername, fileid, filename }: ProjectProps) => {
             <div>TECHNOLOGY</div>
           </div>
           <div>
-            <Link href={`/${foldername}/${nameWithoutExtension}?id=${fileid}`}>
+            <Link href={`/${foldername}/${filename}`}>
               <button className="bg-[#40348C] text-white p-2 mt-4 rounded-sm">
                 OPEN PROJECT
               </button>
