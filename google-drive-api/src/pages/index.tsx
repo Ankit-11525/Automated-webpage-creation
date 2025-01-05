@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
+import router from "next/router";
 type Folder = {
   id: string;
   name: string;
@@ -18,7 +19,18 @@ const Home = () => {
 
     fetchFolders();
   }, []);
-
+  useEffect(() => {
+    // Check if the user has visited the home page before
+    const hasVisitedHome = localStorage.getItem('user');
+    
+    // If the user has not visited, redirect to login
+    if (!hasVisitedHome) {
+      router.push('/login');
+    } else {
+      // If the user has visited, mark it as true
+      localStorage.setItem('hasVisitedHome', 'true');
+    }
+  }, []);
   return (
     <div className="container mx-auto p-4">
       <Navbar uname="Sanidhya Tulsinandan" />
