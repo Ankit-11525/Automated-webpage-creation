@@ -1,5 +1,5 @@
 const USERNAME=process.env.PUBLIC_NEXT_USERNAME;
-const PASSWORD=process.env.PUBLIC_NEXT_PASSWORD;
+const PASSWORD=process.env.PRIVATE_NEXT_PASSWORD;
 
 const ADMIN_USER = {
   username:USERNAME,
