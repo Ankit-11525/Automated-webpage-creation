@@ -2,15 +2,16 @@ import Navbar from "@/components/Navbar";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
-interface sectionRow {
+type Section = {
   heading: string;
+  subheading: string;
   description: string;
   images: string[];
-}
+};
 const Project = () => {
   const router = useRouter();
   const { uname, project } = router.query;
-  const [projectData, setProjectData] = useState<sectionRow[]>([]);
+  const [projectData, setProjectData] = useState<Section[]>([]);
   // check uname is a string, handle undefined or array cases
   const userName = Array.isArray(uname) ? uname[0] : uname || "";
   useEffect(() => {
@@ -19,7 +20,7 @@ const Project = () => {
         const res = await fetch(
           `/api/get-file-content?folderName=${uname}&fileName=${project}`
         );
-        const data: sectionRow[] = await res.json();
+        const data: Section[] = await res.json();
         setProjectData(data);
       };
 
@@ -54,10 +55,10 @@ const Project = () => {
         {/* ------------------------------------------ith section--------------------------------- */}
         <div>
           <div className="flex flex-col gap-2 justify-center mt-8">
-            {projectData.map((sectionrow: sectionRow, index: number) => (
+            {projectData.map((sectionrow: Section, index: number) => (
               <div key={index}>
                 <div className="text-[16px] md:text-[24px] font-bold  font-Nohemi">
-                  SUB-HEADING
+                  {sectionrow.subheading}
                 </div>
                 <div className=" text-[40px] md:text-[54px] font-bold text-[#40348C] font-Nohemi ">
                   {sectionrow.heading}
@@ -66,18 +67,41 @@ const Project = () => {
                   {sectionrow.description}
                 </div>
 
-                {/*------------------------- images for ith section */}
-                <div className="flex flex-col md:flex-row">
-                  {sectionrow.images.map((image: string, i: number) => (
-                    <div key={i} className="w-full h-[60vh] b rounded-md mt-8">
-                      <Image
-                        src={image}
-                        alt="projectimage"
-                        width={256}
-                        height={256}
-                      />
-                    </div>
-                  ))}
+                <div
+                  className={`flex flex-col ${
+                    sectionrow.images.length > 1
+                      ? "md:flex-row md:flex-wrap border-2 border-r-emerald-400 items-center gap-2 justify-around "
+                      : ""
+                  }`}
+                >
+                  {sectionrow.images.map((image: string, i: number) => {
+                    const getWidthClass = () => {
+                      if (sectionrow.images.length === 1) {
+                        return "w-full";
+                      } else if (sectionrow.images.length === 2) {
+                        return "w-2/5";
+                      } else if (sectionrow.images.length === 3) {
+                        return "w-1/4";
+                      } else if (sectionrow.images.length === 4) {
+                        return "w-2/5"; // For a 2x2 grid
+                      }
+                    };
+
+                    return (
+                      <div
+                        key={i}
+                        className={`${getWidthClass()} h-[40vh] md:h-[60vh] rounded-md mt-8 overflow-hidden border-2 border-r-emerald-400`}
+                      >
+                        <Image
+                          src={image}
+                          alt="projectimage"
+                          width={256}
+                          height={256}
+                          className="w-full h-full  max-w-full"
+                        />
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
             ))}
