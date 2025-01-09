@@ -21,11 +21,12 @@ const drive = google.drive({
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
-    const {id} = req.query; 
+    const {id} = req.query;     
     const result = await drive.files.list({
-      q: `'${id}' in parents and (mimeType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or mimeType = 'application/vnd.google-apps.spreadsheet')`,
-      fields: 'files(id, name)',
-    });    
+      q: `'${id}' in parents and not (name contains 'mainpage') and (mimeType='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' or mimeType='application/vnd.google-apps.spreadsheet')`,
+      fields: 'files(id, name, mimeType)',
+  });
+  
     res.status(200).json(result.data.files);
   } catch (error) {
     res.status(500).json({ error: `Failed to list files ${error}` });

@@ -94,6 +94,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 images,
             });
         });
+        // const arrToJson = filteredData.map((row) => {
+        //     return {
+        //       column1: row[0] || '',
+        //       column2: row[1] || '',
+        //       column3: row[2] || '',
+        //       // Map more columns as needed
+        //     };
+        //   });
         console.log("arrtojson : ",arrtojson)
 
         res.status(200).json(arrtojson);
